@@ -46,8 +46,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # - name: build
-      #   run: pnpm run build
+      - name: build
+        run: pnpm run build
 
       - name: Typecheck
         run: tsc --noEmit
@@ -78,8 +78,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # - name: build
-      #   run: pnpm run build
+      - name: build
+        run: pnpm run build
 
       - name: Test
         run: pnpm run test
