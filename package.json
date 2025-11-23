@@ -1,0 +1,36 @@
+{
+  "name": "schema-bridgion",
+  "type": "module",
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.9.0",
+  "description": "",
+  "author": "",
+  "license": "MIT",
+  "keywords": [],
+  "main": "dist/index.js",
+  "files": ["dist"],
+  "scripts": {
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "build": "tsdown",
+    "prepare": "simple-git-hooks",
+    "tsc": "tsc --noEmit",
+    "lint": "eslint . --fix --cache"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^6.2.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.4.0",
+    "lint-staged": "^15.2.5",
+    "simple-git-hooks": "^2.11.1",
+    "tsdown": "^0.16.6",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint . --fix --cache"
+  }
+}
