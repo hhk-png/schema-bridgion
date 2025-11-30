@@ -8,7 +8,11 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       provider: 'v8',
-      exclude: ['ui', ...coverageConfigDefaults.exclude],
+      exclude: [
+        '*.config.ts',
+        '**/types.ts',
+        ...coverageConfigDefaults.exclude,
+      ],
     },
     include: ['test/**/*.test.ts'],
   },
