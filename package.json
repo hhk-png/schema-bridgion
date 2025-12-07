@@ -35,7 +35,7 @@
     "vitest": "^4.0.15"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
+    "pre-commit": "pnpm lint-staged && pnpm run tsc"
   },
   "lint-staged": {
     "*": "eslint . --fix --cache"

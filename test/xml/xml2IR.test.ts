@@ -300,7 +300,7 @@ describe('xml2IR', () => {
 
     const res = xml2IR(xml)
     const bChild = (res.root[0] as IRObjectNode).children[0] as IRObjectNode
-    const bAttrsKeys = Object.keys(bChild.attrs)
+    const bAttrsKeys = Object.keys(bChild.attrs!)
     expect(bAttrsKeys[0]).toBe('xmlns:attr2')
     expect(bAttrsKeys[1]).toBe('attr')
   })
