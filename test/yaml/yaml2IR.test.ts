@@ -407,7 +407,7 @@ describe('yaml2IR', () => {
     `
 
     const root = yaml2IR(yaml).root
-    expect(root).toMatchSnapshot('deep_nested')
+    expect(root).toMatchSnapshot()
   })
 
   // TODO: template

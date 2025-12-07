@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`yaml2IR > Mixed nested structure > deep_nested 1`] = `
+exports[`yaml2IR > mixed nested structure 1`] = `
 [
   {
     "children": [
