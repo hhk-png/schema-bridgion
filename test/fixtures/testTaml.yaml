@@ -1,0 +1,40 @@
+# ======================================
+# Anchors and references
+# ======================================
+default: &DEFAULT_SETTINGS
+  width: 100
+  height: 200
+  color: blue
+
+user1:
+  <<: *DEFAULT_SETTINGS
+  name: Tom
+
+user2:
+  <<: *DEFAULT_SETTINGS
+  name: Jerry
+  color: red # override anchor value
+
+# Nested with anchors
+template: &TEMPLATE
+  params:
+    retries: 3
+    interval: 100
+    servers:
+      - host: server1
+        port: 8000
+      - host: server2
+        port: 9000
+
+serviceA:
+  <<: *TEMPLATE
+  params:
+    retries: 5 # override a nested value
+    interval: 200
+
+serviceB:
+  <<: *TEMPLATE
+  params:
+    servers:
+      - host: backup
+        port: 7000 # replacing nested list

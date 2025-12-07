@@ -1,14 +1,21 @@
 export type IRNode
-  = IRObjectNode | IRCommentNode | IRScalarNode | IRTextNode | IRCDATANode
+  = IRObjectNode
+    | IRCommentNode
+    | IRScalarNode
+    | IRTextNode
+    | IRCDATANode
+    | IRArrayNode
 
-export type Scalar = string | number | boolean
+// null is existed in yaml
+export type Scalar = string | number | boolean | null
 
 // object node
 export interface IRObjectNode {
   type: 'object'
-  name: string
+  // if there is no name, it means that it is an array in an array, but not in object
+  name?: string
   // XML attributes, such as <a id="1">
-  attrs: Record<string, Scalar>
+  attrs?: Record<string, Scalar>
   // sub nodes（orderly）
   children: IRNode[]
 }
@@ -16,7 +23,8 @@ export interface IRObjectNode {
 // scalar value
 export interface IRScalarNode {
   type: 'scalar'
-  name: string
+  // if there is no name, it means that it is an array in an array, but not in object
+  name?: string
   attrs: Record<string, Scalar>
   value: Scalar
 }
@@ -36,6 +44,14 @@ export interface IRCommentNode {
   value: string
 }
 
+// specified in yaml
+export interface IRArrayNode {
+  // if there is no name, it means that it is an array in an array, but not in object
+  name?: string
+  type: 'array'
+  value: IRNode[]
+}
+
 /**
  * root document
  */
@@ -49,3 +65,6 @@ export interface IRDocument {
   // comments and line break styles. need to be detailed
   metadata: Record<string, any>
 }
+
+// Object node stores its value in children key
+// Array node stores its value in value key

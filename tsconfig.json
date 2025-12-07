@@ -6,12 +6,6 @@
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "paths": {
-      "~xml/*": ["src/xml/*"],
-      "~json/*": ["src/json/*"],
-      "~yaml/*": ["src/yaml/*"],
-      "~toml/*": ["src/toml/*"]
-    },
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "strict": true,

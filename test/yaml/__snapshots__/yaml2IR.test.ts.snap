@@ -1,0 +1,118 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`yaml2IR > Mixed nested structure > deep_nested 1`] = `
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "name": "list",
+                "type": "array",
+                "value": [
+                  {
+                    "children": [
+                      {
+                        "name": "type",
+                        "type": "scalar",
+                        "value": "fruit",
+                      },
+                      {
+                        "name": "items",
+                        "type": "array",
+                        "value": [
+                          {
+                            "type": "scalar",
+                            "value": "apple",
+                          },
+                          {
+                            "type": "scalar",
+                            "value": "banana",
+                          },
+                          {
+                            "type": "scalar",
+                            "value": "orange",
+                          },
+                        ],
+                      },
+                    ],
+                    "type": "object",
+                  },
+                  {
+                    "children": [
+                      {
+                        "name": "type",
+                        "type": "scalar",
+                        "value": "animal",
+                      },
+                      {
+                        "name": "items",
+                        "type": "array",
+                        "value": [
+                          {
+                            "type": "scalar",
+                            "value": "dog",
+                          },
+                          {
+                            "type": "scalar",
+                            "value": "cat",
+                          },
+                          {
+                            "type": "scalar",
+                            "value": "bird",
+                          },
+                        ],
+                      },
+                    ],
+                    "type": "object",
+                  },
+                ],
+              },
+              {
+                "children": [
+                  {
+                    "name": "enabled",
+                    "type": "scalar",
+                    "value": true,
+                  },
+                  {
+                    "name": "timeout",
+                    "type": "scalar",
+                    "value": 5000,
+                  },
+                ],
+                "name": "settings",
+                "type": "object",
+              },
+            ],
+            "name": "level2",
+            "type": "object",
+          },
+          {
+            "children": [
+              {
+                "name": "created_at",
+                "type": "scalar",
+                "value": "2024-01-01",
+              },
+              {
+                "name": "created_by",
+                "type": "scalar",
+                "value": "system",
+              },
+            ],
+            "name": "meta",
+            "type": "object",
+          },
+        ],
+        "name": "level1",
+        "type": "object",
+      },
+    ],
+    "name": "deep_nested",
+    "type": "object",
+  },
+]
+`;

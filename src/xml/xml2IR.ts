@@ -172,6 +172,6 @@ function trimScalar(value: Scalar): Scalar {
 }
 
 function valueToString(value: Scalar): string {
-  const temp = typeof value === 'string' ? value : value.toString()
+  const temp = typeof value === 'string' ? value : value!.toString()
   return temp.trim()
 }

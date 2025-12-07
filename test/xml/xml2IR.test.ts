@@ -1,6 +1,6 @@
 import type { IRObjectNode } from 'src/types'
 import { describe, expect, it } from 'vitest'
-import { xml2IR } from '~xml/xml2IR'
+import { xml2IR } from '../../src/xml/xml2IR'
 
 describe('xml2IR', () => {
   it('should parse instruction node and root comment node correctly', () => {
