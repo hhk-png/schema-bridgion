@@ -57,11 +57,8 @@ jobs:
 
     strategy:
       matrix:
-        node: [lts/*]
+        node: [20.x, 22.x, 24.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - node: 18.x
-            os: ubuntu-latest
       fail-fast: false
 
     steps:
