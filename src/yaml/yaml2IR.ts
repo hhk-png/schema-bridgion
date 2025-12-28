@@ -1,5 +1,5 @@
 import type { IRArrayNode, IRCommentNode, IRDocument, IRNode, IRObjectNode, IRScalarNode } from '../types'
-import { Pair, parseDocument, YAMLMap, YAMLSeq } from 'yaml'
+import { Alias, Pair, parseDocument, YAMLMap, YAMLSeq } from 'yaml'
 
 interface Yaml2IROptions {
   mergeTemplateParams?: boolean
@@ -8,8 +8,11 @@ const defaultOptions: Yaml2IROptions = {
   mergeTemplateParams: true,
 }
 
+const anchorMap = new Map<string, any[]>()
+
 export function yaml2IR(yaml: string, options: Yaml2IROptions = {}): IRDocument {
-  const doc = parseDocument(yaml)
+  anchorMap.clear()
+  const doc = parseDocument(yaml, { merge: true })
   options = { ...defaultOptions, ...options }
   return convertYamlToIRDocument(doc, options)
 }
@@ -26,11 +29,13 @@ function convertYamlToIRDocument(
   if (!doc.contents) {
     return IRDoc
   }
+  insertBeforeCommentIfExist(doc, IRDoc.root)
   insertBeforeCommentIfExist(doc.contents, IRDoc.root)
   const root = convertYamlItems(doc.contents, options, doc)
   insertCommentIfExist(doc.contents, root)
+  insertCommentIfExist(doc, root)
 
-  IRDoc.root = root
+  IRDoc.root = [...IRDoc.root, ...root]
   return IRDoc
 }
 
@@ -46,6 +51,10 @@ function convertYamlItems(
   const result: IRNode[] = []
 
   for (const item of items) {
+    if (item instanceof Alias) {
+      result.push(...(anchorMap.get(item.source) ?? []))
+      continue
+    }
     result.push(...convertSingleItem(item, options, doc))
   }
 
@@ -64,8 +73,27 @@ function convertSingleItem(
     const nodes: IRNode[] = []
     insertBeforeCommentIfExist(key, nodes)
     const value = node.value
-    nodes.push(...convertValueNode(value, keyText, options, doc))
-    insertCommentIfExist(key, nodes)
+    if (!(value instanceof Alias)) {
+      const convertedNodes = convertValueNode(value, keyText, options, doc)
+      nodes.push(...convertedNodes)
+      // value maybe an anchor
+      if (value.anchor) {
+        anchorMap.set(value.anchor, convertedNodes)
+      }
+    }
+    else {
+      // clone anchor to avoid mutating
+      const anchor = [...anchorMap.get(value.source)!]
+      if (anchor[0].name) {
+        anchor[0] = {
+          ...anchor[0],
+          name: keyText,
+        }
+      }
+
+      // value is an alias
+      nodes.push(...(anchor ?? []))
+    }
 
     return nodes
   }
@@ -86,7 +114,7 @@ function convertValueNode(
   if (node instanceof YAMLSeq) {
     ir = {
       type: 'array',
-      value: convertYamlItems(node, options, doc),
+      values: convertYamlItems(node, options, doc),
     } as IRArrayNode
   }
   else if (node instanceof YAMLMap || node instanceof Pair) {

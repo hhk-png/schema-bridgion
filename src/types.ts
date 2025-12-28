@@ -6,6 +6,14 @@ export type IRNode
     | IRCDATANode
     | IRArrayNode
 
+export interface IRNodeAll {
+  type: 'object' | 'scalar' | 'cdata' | 'text' | 'comment' | 'array'
+  attrs: Record<string, Scalar>
+  children: IRNode[]
+  name: string
+  value: Scalar | IRNode[]
+}
+
 // null is existed in yaml
 export type Scalar = string | number | boolean | null
 
@@ -49,7 +57,7 @@ export interface IRArrayNode {
   // if there is no name, it means that it is an array in an array, but not in object
   name?: string
   type: 'array'
-  value: IRNode[]
+  values: IRNode[]
 }
 
 /**

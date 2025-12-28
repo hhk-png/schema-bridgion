@@ -1,5 +1,52 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`yaml2IR > comment > comment in recursive structure 1`] = `
+[
+  {
+    "type": "comment",
+    "value": "comment1",
+  },
+  {
+    "type": "comment",
+    "value": "Trigger on pushes to the main branch",
+  },
+  {
+    "children": [
+      {
+        "type": "comment",
+        "value": "12Trigger on pushes to the main branch",
+      },
+      {
+        "children": [
+          {
+            "type": "comment",
+            "value": "34Trigger on pushes to the main branch",
+          },
+          {
+            "name": "branches",
+            "type": "array",
+            "values": [
+              {
+                "type": "scalar",
+                "value": "main",
+              },
+            ],
+          },
+          {
+            "type": "comment",
+            "value": "comment4",
+          },
+        ],
+        "name": "push",
+        "type": "object",
+      },
+    ],
+    "name": "on",
+    "type": "object",
+  },
+]
+`;
+
 exports[`yaml2IR > mixed nested structure 1`] = `
 [
   {
@@ -11,7 +58,7 @@ exports[`yaml2IR > mixed nested structure 1`] = `
               {
                 "name": "list",
                 "type": "array",
-                "value": [
+                "values": [
                   {
                     "children": [
                       {
@@ -22,7 +69,7 @@ exports[`yaml2IR > mixed nested structure 1`] = `
                       {
                         "name": "items",
                         "type": "array",
-                        "value": [
+                        "values": [
                           {
                             "type": "scalar",
                             "value": "apple",
@@ -50,7 +97,7 @@ exports[`yaml2IR > mixed nested structure 1`] = `
                       {
                         "name": "items",
                         "type": "array",
-                        "value": [
+                        "values": [
                           {
                             "type": "scalar",
                             "value": "dog",

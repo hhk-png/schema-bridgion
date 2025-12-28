@@ -1,4 +1,4 @@
-import type { IRArrayNode, IRCommentNode, IRObjectNode, IRScalarNode } from '../../src'
+import type { IRArrayNode, IRCommentNode, IRNode, IRNodeAll, IRObjectNode, IRScalarNode } from '../../src'
 import { describe, expect, it } from 'vitest'
 import { yaml2IR } from '../../src/yaml/yaml2IR'
 
@@ -195,15 +195,15 @@ describe('yaml2IR', () => {
     expect(root.length).toBe(7)
     // inline_list
     expect((<IRArrayNode>root[1]).name).toBe('inline_list')
-    const root1Value = (<IRArrayNode>root[1]).value
+    const root1Value = (<IRArrayNode>root[1]).values
     expect(root1Value.length).toBe(3)
     expect(root1Value[2]).toEqual({ type: 'scalar', value: 3 })
     // block_list
-    const root3Value = (<IRArrayNode>root[3]).value
+    const root3Value = (<IRArrayNode>root[3]).values
     expect(root3Value.length).toBe(3)
     expect(root3Value[1]).toEqual({ type: 'scalar', value: 'banana' })
     // complex_list
-    const root5Value: any = (<IRArrayNode>root[5]).value
+    const root5Value: any = (<IRArrayNode>root[5]).values
     expect(root5Value[1]).toEqual({
       type: 'object',
       children: [
@@ -220,10 +220,10 @@ describe('yaml2IR', () => {
       ],
     })
     // matrix
-    const root6Value: any = (<IRArrayNode>root[6]).value
-    expect(root6Value[1].value[1]).toEqual({
+    const root6Value: any = (<IRArrayNode>root[6]).values
+    expect(root6Value[1].values[1]).toEqual({
       type: 'array',
-      value: [
+      values: [
         {
           type: 'scalar',
           value: 20,
@@ -342,9 +342,9 @@ describe('yaml2IR', () => {
     expect(root.length).toBe(2)
     expect((<IRObjectNode>root[1]).children.length).toBe(2)
     // @ts-expect-error type is wrong
-    expect((<IRObjectNode>root[1]).children[0].value.length).toBe(3)
+    expect((<IRObjectNode>root[1]).children[0].values.length).toBe(3)
     // @ts-expect-error type is wrong
-    expect((<IRObjectNode>root[1]).children[1].value.length).toBe(3)
+    expect((<IRObjectNode>root[1]).children[1].values.length).toBe(3)
   })
 
   it('list containing nested objects', () => {
@@ -366,11 +366,11 @@ describe('yaml2IR', () => {
 
     const root = yaml2IR(yaml).root
     // @ts-expect-error type is wrong
-    expect((<IRObjectNode>root[0]).value.length).toBe(2)
+    expect((<IRObjectNode>root[0]).values.length).toBe(2)
     // @ts-expect-error type is wrong
-    expect((<IRObjectNode>root[0]).value[0].children.length).toBe(2)
+    expect((<IRObjectNode>root[0]).values[0].children.length).toBe(2)
     // @ts-expect-error type is wrong
-    expect((<IRObjectNode>root[0]).value[1].children[1].children[1].value).toEqual([
+    expect((<IRObjectNode>root[0]).values[1].children[1].children[1].values).toEqual([
       {
         type: 'scalar',
         value: 'coding',
@@ -410,6 +410,214 @@ describe('yaml2IR', () => {
     expect(root).toMatchSnapshot()
   })
 
-  // TODO: template
-  // TODO: comment
+  describe('comment', () => {
+    it('comment in root', () => {
+      const yaml = `
+      # comment
+      main: 1
+      `
+      const root = yaml2IR(yaml).root
+      expect(root).toEqual([
+        {
+          type: 'comment',
+          value: 'comment',
+        },
+        {
+          type: 'scalar',
+          name: 'main',
+          value: 1,
+        },
+      ])
+    })
+
+    it('comment in recursive structure', () => {
+      const yaml = `
+        # comment1
+        on:
+          # Trigger on pushes to the main branch
+          push:
+            # 12Trigger on pushes to the main branch
+            branches:
+              # 34Trigger on pushes to the main branch
+              - main
+              # comment4
+      `
+      const root = yaml2IR(yaml).root
+      expect(root).toMatchSnapshot()
+    })
+
+    it('comment in array', () => {
+      const yaml = `
+        features:
+          # List of enabled features
+          - authentication  # Enable authentication module
+          - logging         # Enable logging module
+          - caching         # Enable caching module
+      `
+      const root = yaml2IR(yaml).root as any
+      expect(root[0].type).toBe('comment')
+      expect((<IRNode[]>root[1].values).length).toBe(6)
+    })
+
+    it('head comment', () => {
+      const yaml = `
+        # comment1
+
+        main: 1
+      `
+      expect(yaml2IR(yaml).root).toEqual([
+        { type: 'comment', value: 'comment1' },
+        { type: 'scalar', value: 1, name: 'main' },
+      ])
+    })
+  })
+
+  describe('anchor and alias', () => {
+    it('schalar', () => {
+      const yaml = `
+        version: &version "2.0.0"
+        port: &default_port 8080
+        enabled: &enabled_flag true
+
+        app_version: *version
+        server_port: *default_port
+        is_active: *enabled_flag
+      `
+      const root = yaml2IR(yaml).root
+      expect(root.slice(3)).toEqual([
+        { type: 'scalar', value: '2.0.0', name: 'app_version' },
+        { type: 'scalar', value: 8080, name: 'server_port' },
+        { type: 'scalar', value: true, name: 'is_active' },
+      ])
+    })
+
+    it('object', () => {
+      const yaml = `
+        database_config: &db_config
+          adapter: postgresql
+          encoding: utf8
+          pool: 5
+          timeout: 5000
+          reconnect: true
+        development_db: *db_config
+      `
+
+      const root = yaml2IR(yaml).root as IRNodeAll[]
+      expect(root[1]).toEqual({
+        type: 'object',
+        children: [
+          { type: 'scalar', value: 'postgresql', name: 'adapter' },
+          { type: 'scalar', value: 'utf8', name: 'encoding' },
+          { type: 'scalar', value: 5, name: 'pool' },
+          { type: 'scalar', value: 5000, name: 'timeout' },
+          { type: 'scalar', value: true, name: 'reconnect' },
+        ],
+        name: 'development_db',
+      })
+    })
+
+    it('list', () => {
+      const yaml = `
+        admin_users: &admins
+          - alice@example.com
+          - bob@example.com
+          - charlie@example.com
+        project1_admins: *admins
+      `
+
+      const root = yaml2IR(yaml).root as IRNodeAll[]
+      expect(root[1]).toEqual({
+        type: 'array',
+        values: [
+          { type: 'scalar', value: 'alice@example.com' },
+          { type: 'scalar', value: 'bob@example.com' },
+          { type: 'scalar', value: 'charlie@example.com' },
+        ],
+        name: 'project1_admins',
+      })
+    })
+
+    it('alias in array', () => {
+      const yaml = `
+      permissions: &permissions
+        read: &read_permission
+          action: "read"
+          resource: "*"
+
+      requires: [*read_permission]
+      per: *permissions
+      `
+      const root = yaml2IR(yaml).root as any
+      expect(root[1].values[0]).toEqual({
+        type: 'object',
+        children: [
+          { type: 'scalar', value: 'read', name: 'action' },
+          { type: 'scalar', value: '*', name: 'resource' },
+        ],
+        name: 'read',
+      })
+      expect(root[2]).toEqual({
+        type: 'object',
+        children: [{
+          type: 'object',
+          children: [
+            {
+              name: 'action',
+              type: 'scalar',
+              value: 'read',
+            },
+            {
+              name: 'resource',
+              type: 'scalar',
+              value: '*',
+            },
+          ],
+          name: 'read',
+        }],
+        name: 'per',
+      })
+    })
+
+    it('reference array', () => {
+      const yaml = `
+        list: &listr [1, 2, 3]
+        main: *listr
+        main2: [*listr, *listr]
+      `
+      const root = yaml2IR(yaml).root as any
+      expect(root[1]).toEqual({
+        type: 'array',
+        values: [
+          {
+            type: 'scalar',
+            value: 1,
+          },
+          {
+            type: 'scalar',
+            value: 2,
+          },
+          {
+            type: 'scalar',
+            value: 3,
+          },
+        ],
+        name: 'main',
+      })
+      expect(root[2].values.length).toBe(2)
+    })
+
+    // TODO
+    // it('merge', () => {
+    //   const yaml = `
+    //     base: &base
+    //       timeout: 30
+    //       retries: 3
+
+    //     config:
+    //       <<: *base
+    //       name: "app"
+    //     `
+    //   const root = yaml2IR(yaml)
+    // })
+  })
 })
