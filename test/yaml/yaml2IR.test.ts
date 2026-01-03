@@ -616,7 +616,23 @@ describe('yaml2IR', () => {
       expect(root[2].values.length).toBe(2)
     })
 
-    // TODO
+    it('reference object', () => {
+      const yaml = `
+        object: &objectr {a: 1, b: 2, c: 3}
+        main: *objectr
+      `
+      const root = yaml2IR(yaml).root as any
+      expect(root[1]).toEqual({
+        type: 'object',
+        children: [
+          { type: 'scalar', value: 1, name: 'a' },
+          { type: 'scalar', value: 2, name: 'b' },
+          { type: 'scalar', value: 3, name: 'c' },
+        ],
+        name: 'main',
+      })
+    })
+
     it('merge', () => {
       const yaml = `
         base: &base

@@ -34,12 +34,12 @@ function convertYamlItems(
   yamlNode: any,
   doc: ReturnType<typeof parseDocument>,
 ): IRNode[] {
-  const items: any[] = yamlNode.items ?? [yamlNode]
+  const items: any[] = yamlNode.items
   const result: IRNode[] = []
 
   for (const item of items) {
     if (item instanceof Alias) {
-      result.push(...(anchorMap.get(item.source) ?? []))
+      result.push(...anchorMap.get(item.source)!)
       continue
     }
     result.push(...convertSingleItem(item, doc))
@@ -76,6 +76,7 @@ function convertSingleItem(
       else {
         // clone anchor to avoid mutating
         const anchor = [...anchorMap.get(value.source)!]
+        /* istanbul ignore else -- @preserve */
         if (anchor[0].name) {
           anchor[0] = {
             ...anchor[0],
@@ -83,7 +84,7 @@ function convertSingleItem(
           }
         }
         // value is an alias
-        nodes.push(...(anchor ?? []))
+        nodes.push(...anchor)
       }
     }
 
