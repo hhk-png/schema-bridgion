@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`toml > nested array of tables 1`] = `
+[
+  {
+    "name": "products",
+    "type": "array",
+    "values": [
+      {
+        "children": [
+          {
+            "name": "name",
+            "type": "scalar",
+            "value": "Widget",
+          },
+          {
+            "name": "variants",
+            "type": "array",
+            "values": [
+              {
+                "children": [
+                  {
+                    "name": "sku",
+                    "type": "scalar",
+                    "value": "W-RED",
+                  },
+                  {
+                    "name": "price",
+                    "type": "scalar",
+                    "value": 9.99,
+                  },
+                ],
+                "name": undefined,
+                "type": "object",
+              },
+              {
+                "children": [
+                  {
+                    "name": "sku",
+                    "type": "scalar",
+                    "value": "W-BLUE",
+                  },
+                  {
+                    "name": "price",
+                    "type": "scalar",
+                    "value": 10.99,
+                  },
+                ],
+                "name": undefined,
+                "type": "object",
+              },
+            ],
+          },
+        ],
+        "name": undefined,
+        "type": "object",
+      },
+    ],
+  },
+]
+`;
+
+exports[`toml > string 1`] = `
+[
+  {
+    "name": "basic_string",
+    "type": "scalar",
+    "value": "Hello World TOML",
+  },
+  {
+    "name": "unicode_string",
+    "type": "scalar",
+    "value": "你好，世界 🌍",
+  },
+  {
+    "name": "literal_string",
+    "type": "scalar",
+    "value": "C:/Users/Toml/test.txt",
+  },
+  {
+    "name": "multiline_basic",
+    "type": "scalar",
+    "value": "      Line 1
+      Line 2
+      Line 3
+      ",
+  },
+  {
+    "name": "multiline_literal",
+    "type": "scalar",
+    "value": "      Line A
+      Line B
+      Line C
+      ",
+  },
+]
+`;

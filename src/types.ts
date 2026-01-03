@@ -20,7 +20,7 @@ export type Scalar = string | number | boolean | null
 // object node
 export interface IRObjectNode {
   type: 'object'
-  // if there is no name, it means that it is an array in an array, but not in object
+  // if there is no name, it means that it is an object in an array, but not in object
   name?: string
   // XML attributes, such as <a id="1">
   attrs?: Record<string, Scalar>
@@ -31,9 +31,9 @@ export interface IRObjectNode {
 // scalar value
 export interface IRScalarNode {
   type: 'scalar'
-  // if there is no name, it means that it is an array in an array, but not in object
+  // if there is no name, it means that it is an schalar in an array, but not in object
   name?: string
-  attrs: Record<string, Scalar>
+  attrs?: Record<string, Scalar>
   value: Scalar
 }
 
@@ -42,6 +42,7 @@ export interface IRCDATANode {
   value: string
 }
 
+// text outside xml tag
 export interface IRTextNode {
   type: 'text'
   value: string
@@ -54,7 +55,7 @@ export interface IRCommentNode {
 
 // specified in yaml
 export interface IRArrayNode {
-  // if there is no name, it means that it is an array in an array, but not in object
+  // if there is no name, it means that it is an element in an array, but not in object
   name?: string
   type: 'array'
   values: IRNode[]

@@ -7,7 +7,7 @@ import type {
   IRScalarNode,
   IRTextNode,
   Scalar,
-} from 'src/types'
+} from '../types'
 import { XMLParser } from 'fast-xml-parser'
 
 export function xml2IR(xml: string): IRDocument {

@@ -1,6 +1,6 @@
 import type { IRArrayNode, IRCommentNode, IRNode, IRNodeAll, IRObjectNode, IRScalarNode } from '../../src'
 import { describe, expect, it } from 'vitest'
-import { yaml2IR } from '../../src/yaml/yaml2IR'
+import { yaml2IR } from '../../src'
 
 describe('yaml2IR', () => {
   it('yaml without content', () => {
