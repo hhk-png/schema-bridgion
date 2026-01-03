@@ -1,25 +1,16 @@
 import type { IRArrayNode, IRCommentNode, IRDocument, IRNode, IRObjectNode, IRScalarNode } from '../types'
 import { Alias, Pair, parseDocument, YAMLMap, YAMLSeq } from 'yaml'
 
-interface Yaml2IROptions {
-  mergeTemplateParams?: boolean
-}
-const defaultOptions: Yaml2IROptions = {
-  mergeTemplateParams: true,
-}
-
 const anchorMap = new Map<string, any[]>()
 
-export function yaml2IR(yaml: string, options: Yaml2IROptions = {}): IRDocument {
+export function yaml2IR(yaml: string): IRDocument {
   anchorMap.clear()
   const doc = parseDocument(yaml, { merge: true })
-  options = { ...defaultOptions, ...options }
-  return convertYamlToIRDocument(doc, options)
+  return convertYamlToIRDocument(doc)
 }
 
 function convertYamlToIRDocument(
   doc: ReturnType<typeof parseDocument>,
-  options: Yaml2IROptions,
 ): IRDocument {
   const IRDoc: IRDocument = {
     sourceFormat: 'yaml',
@@ -31,7 +22,7 @@ function convertYamlToIRDocument(
   }
   insertBeforeCommentIfExist(doc, IRDoc.root)
   insertBeforeCommentIfExist(doc.contents, IRDoc.root)
-  const root = convertYamlItems(doc.contents, options, doc)
+  const root = convertYamlItems(doc.contents, doc)
   insertCommentIfExist(doc.contents, root)
   insertCommentIfExist(doc, root)
 
@@ -41,12 +32,8 @@ function convertYamlToIRDocument(
 
 function convertYamlItems(
   yamlNode: any,
-  options: Yaml2IROptions,
   doc: ReturnType<typeof parseDocument>,
 ): IRNode[] {
-  if (!yamlNode)
-    return []
-
   const items: any[] = yamlNode.items ?? [yamlNode]
   const result: IRNode[] = []
 
@@ -55,7 +42,7 @@ function convertYamlItems(
       result.push(...(anchorMap.get(item.source) ?? []))
       continue
     }
-    result.push(...convertSingleItem(item, options, doc))
+    result.push(...convertSingleItem(item, doc))
   }
 
   return result
@@ -63,7 +50,6 @@ function convertYamlItems(
 
 function convertSingleItem(
   node: any,
-  options: Yaml2IROptions,
   doc: ReturnType<typeof parseDocument>,
 ): IRNode[] {
   if (node instanceof Pair) {
@@ -74,7 +60,7 @@ function convertSingleItem(
     insertBeforeCommentIfExist(key, nodes)
     const value = node.value
     if (!(value instanceof Alias)) {
-      const convertedNodes = convertValueNode(value, keyText, options, doc)
+      const convertedNodes = convertValueNode(value, keyText, doc)
       nodes.push(...convertedNodes)
       // value maybe an anchor
       if (value.anchor) {
@@ -82,29 +68,34 @@ function convertSingleItem(
       }
     }
     else {
-      // clone anchor to avoid mutating
-      const anchor = [...anchorMap.get(value.source)!]
-      if (anchor[0].name) {
-        anchor[0] = {
-          ...anchor[0],
-          name: keyText,
-        }
+      // is merge
+      if (key.source === '<<') {
+        const aliasAnchor = anchorMap.get(value.source)!
+        nodes.push(...aliasAnchor[0].children)
       }
-
-      // value is an alias
-      nodes.push(...(anchor ?? []))
+      else {
+        // clone anchor to avoid mutating
+        const anchor = [...anchorMap.get(value.source)!]
+        if (anchor[0].name) {
+          anchor[0] = {
+            ...anchor[0],
+            name: keyText,
+          }
+        }
+        // value is an alias
+        nodes.push(...(anchor ?? []))
+      }
     }
 
     return nodes
   }
 
-  return convertValueNode(node, undefined, options, doc)
+  return convertValueNode(node, undefined, doc)
 }
 
 function convertValueNode(
   node: any,
   keyName: string | undefined,
-  options: Yaml2IROptions,
   doc: ReturnType<typeof parseDocument>,
 ): IRNode[] {
   const res: IRNode[] = []
@@ -114,13 +105,13 @@ function convertValueNode(
   if (node instanceof YAMLSeq) {
     ir = {
       type: 'array',
-      values: convertYamlItems(node, options, doc),
+      values: convertYamlItems(node, doc),
     } as IRArrayNode
   }
   else if (node instanceof YAMLMap || node instanceof Pair) {
     ir = {
       type: 'object',
-      children: convertYamlItems(node, options, doc),
+      children: convertYamlItems(node, doc),
     } as IRObjectNode
   }
   else {

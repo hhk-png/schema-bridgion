@@ -3,6 +3,16 @@ import { describe, expect, it } from 'vitest'
 import { yaml2IR } from '../../src/yaml/yaml2IR'
 
 describe('yaml2IR', () => {
+  it('yaml without content', () => {
+    const yaml = ''
+    const res = yaml2IR(yaml)
+    expect(res).toEqual({
+      sourceFormat: 'yaml',
+      metadata: {},
+      root: [],
+    })
+  })
+
   it('basic keys and tail comment', async () => {
     const yaml = `
       # ======================================
@@ -607,17 +617,56 @@ describe('yaml2IR', () => {
     })
 
     // TODO
-    // it('merge', () => {
-    //   const yaml = `
-    //     base: &base
-    //       timeout: 30
-    //       retries: 3
+    it('merge', () => {
+      const yaml = `
+        base: &base
+          timeout: 30
+          retries: 3
 
-    //     config:
-    //       <<: *base
-    //       name: "app"
-    //     `
-    //   const root = yaml2IR(yaml)
-    // })
+        config:
+          <<: *base
+          name: "app"
+        `
+      const root = yaml2IR(yaml)
+      expect(root.root).toEqual([
+        {
+          type: 'object',
+          children: [
+            {
+              type: 'scalar',
+              value: 30,
+              name: 'timeout',
+            },
+            {
+              type: 'scalar',
+              value: 3,
+              name: 'retries',
+            },
+          ],
+          name: 'base',
+        },
+        {
+          type: 'object',
+          children: [
+            {
+              type: 'scalar',
+              value: 30,
+              name: 'timeout',
+            },
+            {
+              type: 'scalar',
+              value: 3,
+              name: 'retries',
+            },
+            {
+              type: 'scalar',
+              value: 'app',
+              name: 'name',
+            },
+          ],
+          name: 'config',
+        },
+      ])
+    })
   })
 })
