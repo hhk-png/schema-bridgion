@@ -1,3 +1,4 @@
+export { json2IR } from './json/json2IR'
 export { toml2IR } from './toml/toml2IR'
 export type * from './types'
 export { xml2IR } from './xml/xml2IR'
