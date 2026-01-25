@@ -1,0 +1,47 @@
+root:
+  meta:
+    requestId: req-8f3a2c91
+    timestamp: 2026-01-25T14:32:10Z
+    success: true
+    error: null
+  user:
+    id: 102483
+    username: alice_wonder
+    profile:
+      nickname: Alice
+      age: 28
+      email: alice@example.com
+      roles:
+        - user
+        - editor
+      preferences:
+        language: zh-CN
+        theme: dark
+        notifications:
+          email: true
+  projects:
+    - projectId: p-001
+      name: Data Analysis Platform
+      status: active
+      members:
+        - userId: 102483
+          role: owner
+        - userId: 204857
+          role: contributor
+      stats:
+        stars: 153
+        forks: 27
+        issues:
+          open: 5
+          closed: 42
+    - projectId: p-002
+      name: Mobile App
+      status: archived
+      members: []
+      stats:
+        forks: 1
+        issues:
+          open: 0
+          closed: 7
+  pagination:
+    page: 1

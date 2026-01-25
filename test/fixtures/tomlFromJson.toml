@@ -1,0 +1,61 @@
+[root.meta]
+requestId = "req-8f3a2c91"
+timestamp = "2026-01-25T14:32:10Z"
+success = true
+
+[root.user]
+id = 102483
+username = "alice_wonder"
+
+[root.user.profile]
+nickname = "Alice"
+age = 28
+email = "alice@example.com"
+roles = [
+  "user",
+  "editor"
+]
+
+[root.user.profile.preferences]
+language = "zh-CN"
+theme = "dark"
+
+[root.user.profile.preferences.notifications]
+email = true
+
+[[root.projects]]
+projectId = "p-001"
+name = "Data Analysis Platform"
+status = "active"
+
+[[root.projects.members]]
+userId = 102483
+role = "owner"
+
+[[root.projects.members]]
+userId = 204857
+role = "contributor"
+
+[root.projects.stats]
+stars = 153
+forks = 27
+
+[root.projects.stats.issues]
+open = 5
+closed = 42
+
+[[root.projects]]
+projectId = "p-002"
+name = "Mobile App"
+status = "archived"
+members = []
+
+[root.projects.stats]
+forks = 1
+
+[root.projects.stats.issues]
+open = 0
+closed = 7
+
+[root.pagination]
+page = 1
