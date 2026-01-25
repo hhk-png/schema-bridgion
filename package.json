@@ -1,13 +1,30 @@
 {
   "name": "schema-bridgion",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "packageManager": "pnpm@10.9.0",
-  "description": "",
-  "author": "",
+  "description": "Schema Bridgion is a library that enables data conversion between different formats.",
+  "author": "hhk-png <fangluoabc@163.com>",
   "license": "MIT",
-  "keywords": [],
-  "main": "dist/index.js",
+  "bugs": "https://github.com/hhk-png/schema-bridgion/issues",
+  "keywords": [
+    "schema",
+    "bridge",
+    "xml",
+    "toml",
+    "yaml",
+    "converter"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.mts",
   "files": [
     "dist"
   ],
@@ -17,7 +34,9 @@
     "build": "tsdown",
     "prepare": "simple-git-hooks",
     "tsc": "tsc --noEmit",
-    "lint": "eslint . --fix --cache"
+    "lint": "eslint . --fix --cache",
+    "release": "bumpp",
+    "publish:ci": "pnpm publish --access public --no-git-checks"
   },
   "dependencies": {
     "fast-xml-parser": "^5.3.2",
@@ -28,6 +47,7 @@
     "@antfu/eslint-config": "^6.2.0",
     "@types/node": "^24.10.1",
     "@vitest/coverage-v8": "^4.0.15",
+    "bumpp": "^10.4.0",
     "eslint": "^9.4.0",
     "lint-staged": "^15.2.5",
     "simple-git-hooks": "^2.11.1",
