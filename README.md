@@ -6,14 +6,14 @@ Schema Bridgion is a library that enables data conversion between different form
 
 ## Installation
 
-You can install Schema Bridgion using npm or yarn.
+You can install Schema Bridgion using npm or pnpm.
 
 ```bash
 # Install using npm
 npm install schema-bridgion
 
 # Install using yarn
-yarn add schema-bridgion
+pnpm add schema-bridgion
 ```
 
 ## Usage Example
@@ -45,6 +45,24 @@ Converts input data from one format to another.
 - `to`: The format of the converted data, which can be `json`, `xml`, `yaml`, or `toml`.
 
 Returns the converted data.
+
+### parse(input: string, type: Format): any
+
+Parses the input string into the JSON format.
+
+- `input`: The input string to be parsed.
+- `type`: The format of the input string, which can be 'xml', 'json', 'yaml', or 'toml'.
+
+Returns the parsed data.
+
+### stringify(obj: any, type: Format): string
+
+Converts the input object into the corresponding data format.
+
+- `obj`: The input object to be converted.
+- `type`: The format of the output data, which can be 'xml', 'json', 'yaml', or 'toml'.
+
+Returns the converted string.
 
 ## Contributions
 
