@@ -6,6 +6,10 @@
   "description": "Schema Bridgion is a library that enables data conversion between different formats.",
   "author": "hhk-png <fangluoabc@163.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hhk-png/schema-bridgion"
+  },
   "bugs": "https://github.com/hhk-png/schema-bridgion/issues",
   "keywords": [
     "schema",
